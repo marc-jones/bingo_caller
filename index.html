@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <title>Bingo</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        #current_number {
+            font-size: 300px;
+            text-align: center;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+        table {
+            width: 100%;
+            font-size: 20px;
+        }
+        table, th, td {
+            border: 1px solid gray;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 15px 0;
+            text-align: center;
+        }
+        .selected {
+            background-color: green;
+            color: white;
+        }
+        #current_number_div {
+            width: 50%;
+            float: left;
+            text-align:center;
+        }
+        #check_table_div {
+            width: 50%;
+            float: right;
+        }
+        #new_game_div {
+            width: 100%;
+            float: left;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            background-color: green; /* Green */
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 30px;
+        }
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type='text/javascript'>
+        $(document).ready(function() {
+            // Create the check table
+            var tens = [];
+            for (i = 0; i <= 80; ) {
+                tens.push(i);
+                i = i+10;
+            }
+            var units = [];
+            for (i = 1; i <= 10; i++) {
+                units.push(i);
+            }
+            for (i = 0; i < tens.length; i++) {
+                $('#check_table').append('<tr id="tens' + tens[i] + '"></tr>');
+                for (j = 0; j < units.length; j++) {
+                    var num = tens[i] + units[j];
+                    $('#tens' + tens[i]).append('<td id="num' + num + '">' + num + '</td>');
+                }
+            }
+            new_game();
+            $('#new_game').on('click', new_game);
+            $('#next').on('click', increment)
+            $('#previous').on('click', decrement)
+            $(document).bind('keydown', function(e) {
+                if (e.which == 39) {
+                    increment();
+                }
+                else if (e.which = 37) {
+                    decrement();
+                }
+            })
+        });
+        function new_game() {
+            nums = []; // Global
+            for (i = 1; i <= 90; i++) {
+                nums.push(i);
+            }
+            nums = shuffle(nums);
+            current_idx = 0; // Global
+            update();
+        }
+        function increment() {
+            current_idx++;
+            if (89 < current_idx) {current_idx = 89;}
+            update();
+        }
+        function decrement() {
+            current_idx--;
+            if (current_idx < 0) {current_idx = 0;}
+            update();
+        }
+        function shuffle(array) {
+            // http://bost.ocks.org/mike/shuffle/
+            var m = array.length, t, i;
+            while (m) {
+                i = Math.floor(Math.random() * m--);
+                t = array[m];
+                array[m] = array[i];
+                array[i] = t;
+            }
+            return array;
+        }
+        function update() {
+            $('#current_number').html(nums[current_idx]);
+            $('td').removeClass('selected');
+            for (i = 0; i <= current_idx; i++) {
+                $('#num' + nums[i]).addClass('selected');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id='current_number_div'>
+        <p id='current_number'></p>
+        <button id='previous'>&#12298 Previous</button>
+        <button id='next'>Next &#12299</button>
+    </div>
+    <div id='check_table_div'>
+        <table id='check_table'></table>
+    </div>
+    <div id='new_game_div'>
+       <button id='new_game'>New Game</button>
+    </div>
+</body>
+</html>
